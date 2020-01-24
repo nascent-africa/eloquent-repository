@@ -197,7 +197,11 @@ Additionally, you may wish to customize where your generated classes end up bein
 To generate everything you need for your Model, run this command:
 
 ```terminal
+<<<<<<< HEAD
 php artisan na:repository PostRepository --model=Post
+=======
+php artisan na:repository PostRepository
+>>>>>>> aa40fb6f34dd8e5e93b893a7a96ace525b35c4f3
 ```
 
 This will create the Model if it does not exist, the Repository and the interface classes.
