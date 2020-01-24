@@ -1,0 +1,28 @@
+<?php
+
+namespace DummyNamespace;
+
+
+use NascentAfrica\EloquentRepository\Contracts\CriteriaInterface;
+use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
+
+/**
+ * Class DummyClass.
+ *
+ * @package DummyNamespace
+ */
+class DummyClass implements CriteriaInterface
+{
+    /**
+     * Apply criteria in query repository
+     *
+     * @param string              $model
+     * @param RepositoryInterface $repository
+     *
+     * @return mixed
+     */
+    public function apply($model, RepositoryInterface $repository)
+    {
+        return $model;
+    }
+}

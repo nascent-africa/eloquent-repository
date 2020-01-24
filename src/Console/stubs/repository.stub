@@ -1,0 +1,31 @@
+<?php
+
+namespace DummyNamespace;
+
+
+use NascentAfrica\EloquentRepository\BaseRepository;
+use DummyFullModelClass;
+use DummyFullInterfaceClass;
+
+/**
+ * Class DummyClass.
+ *
+ * @package DummyNamespace
+ */
+class DummyClass extends BaseRepository implements DummyInterfaceClass
+{
+    /**
+     * @var array
+     */
+    protected $fieldSearchable = [];
+    
+    /**
+     * Specify Model class name
+     *
+     * @return string|\DummyFullModelClass
+     */
+    public function model(): string
+    {
+        return DummyModelClass::class;
+    }
+}

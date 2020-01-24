@@ -1,0 +1,16 @@
+<?php
+
+namespace DummyNamespace;
+
+
+use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
+
+/**
+ * Interface DummyClass.
+ *
+ * @package DummyNamespace
+ */
+interface DummyClass extends RepositoryInterface
+{
+    //
+}

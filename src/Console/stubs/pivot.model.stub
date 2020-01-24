@@ -1,0 +1,21 @@
+<?php
+
+namespace DummyNamespace;
+
+
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+/**
+ * Class DummyClass.
+ *
+ * @package DummyNamespace
+ */
+class DummyClass extends Pivot
+{
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [];
+}
