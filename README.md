@@ -144,24 +144,22 @@ Create your repositories easily through the generator.
 
 #### Config
 
-You must first configure the storage location of the repository files. By default is the "app" folder and the namespace "App". Please note that, values in the `paths` array are acutally used as both *namespace* and file paths. Relax though, both forward and backward slashes are taken care of during generation.
+You must first configure the storage location of the repository files. By default is the "app" folder and the namespace "App". Please note that, values in the `namespaces` array are actually used as both *namespace* and file paths.
 
 ```php
     ...
-    'generator'=>[
-        'basePath'=>app()->path(),
-        'rootNamespace'=>'App\\',
-        'paths'=>[
-            'models'       => 'Entities',
-            'repositories' => 'Repositories',
-            'interfaces'   => 'Repositories',
-            'transformers' => 'Transformers',
-            'presenters'   => 'Presenters',
-            'validators'   => 'Validators',
-            'controllers'  => 'Http/Controllers',
-            'provider'     => 'RepositoryServiceProvider',
-            'criteria'     => 'Criteria',
-        ]
+    'generator'  => [
+        'basePath'      => app()->path(),
+        'rootNamespace' => 'App\\',
+        'namespaces'       => [
+            'repositories' => '\Repositories',
+            'interfaces'   => '\Contracts\Repositories',
+            'criteria'     => '\Criteria',
+            'providers'    => '\Providers',
+            'models'        => '',
+        ],
+
+        'provider'  => 'RepositoryServiceProvider'
     ]
 ```
 
@@ -178,20 +176,19 @@ You may want to save the root of your project folder out of the app and add anot
 Additionally, you may wish to customize where your generated classes end up being saved.  That can be accomplished by editing the `paths` node to your liking.  For example:
 
 ```php
-    'generator'=>[
-        'basePath'=>app()->path(),
-        'rootNamespace'=>'App\\',
-        'paths'=>[
-            'models'=>'Models',
-            'repositories'=>'Repositories\\Eloquent',
-            'interfaces'=>'Contracts\\Repositories',
-            'transformers'=>'Transformers',
-            'presenters'=>'Presenters'
-            'validators'   => 'Validators',
-            'controllers'  => 'Http/Controllers',
-            'provider'     => 'RepositoryServiceProvider',
-            'criteria'     => 'Criteria',
-        ]
+    ...
+    'generator'  => [
+        'basePath'      => app()->path(),
+        'rootNamespace' => 'App\\',
+        'namespaces'       => [
+            'repositories' => '\Repositories',
+            'interfaces'   => '\Repositories',
+            'criteria'     => '\Criteria',
+            'providers'    => '\Providers',
+            'models'        => '\Models',
+        ],
+
+        'provider'  => 'RepositoryServiceProvider'
     ]
 ```
 
@@ -200,7 +197,7 @@ Additionally, you may wish to customize where your generated classes end up bein
 To generate everything you need for your Model, run this command:
 
 ```terminal
-php artisan na:repository Post
+php artisan na:repository PostRepository
 ```
 
 This will create the Model if it does not exist, the Repository and the interface classes.
@@ -224,34 +221,6 @@ And use
 ```php
 public function __construct({YOUR_NAMESPACE}Repositories\PostRepository $repository){
     $this->repository = $repository;
-}
-```
-
-Alternatively, you could use the artisan command to do the binding for you.
-
-```php
-php artisan make:bindings Cats
-
-
-### Use methods
-
-```php
-namespace App\Http\Controllers;
-
-use App\PostRepository;
-
-class PostsController extends BaseController {
-
-    /**
-     * @var PostRepository
-     */
-    protected $repository;
-
-    public function __construct(PostRepository $repository){
-        $this->repository = $repository;
-    }
-
-    ....
 }
 ```
 
@@ -362,7 +331,7 @@ $this->repository->deleteWhere([
 #### Using the command
 
 ```terminal
-php artisan na:criteria My
+php artisan na:criteria MyCriteria
 ```
 
 Criteria are a way to change the repository of the query by applying specific conditions according to your needs. You can add multiple Criteria in your repository.
