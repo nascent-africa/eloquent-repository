@@ -63,15 +63,17 @@ php artisan vendor:publish --provider "NascentAfrica\EloquentRepository\Provider
 - delete($id)
 - deleteWhere(array $where)
 - orderBy($column, $direction = 'asc');
-- with(array $relations);
-- has(string $relation);
-- whereHas(string $relation, closure $closure);
-- hidden(array $fields);
-- visible(array $fields);
-- scopeQuery(Closure $scope);
-- getFieldsSearchable();
-- setPresenter($presenter);
-- skipPresenter($status = true);
+- onlyTrashed()
+- with(array $relations)
+- has(string $relation)
+- whereHas(string $relation, closure $closure)
+- function withTrashed()
+- hidden(array $fields)
+- visible(array $fields)
+- scopeQuery(Closure $scope)
+- getFieldsSearchable()
+- setPresenter($presenter)
+- skipPresenter($status = true)
 
 
 ### NascentAfrica\EloquentRepository\Contracts\RepositoryCriteriaInterface
