@@ -336,6 +336,7 @@ abstract class BaseRepository implements RepositoryInterface
         $this->applyConditions($where);
 
         $collection = $this->model->get($columns);
+
         $this->resetModel();
 
         return $collection;
@@ -579,6 +580,17 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * Only return trashed results.
+     *
+     * @return $this
+     */
+    public function onlyTrashed()
+    {
+        $this->model = $this->model->onlyTrashed($relations);
+        return $this;
+    }
+
+    /**
      * Order query
      *
      * @param string $column
@@ -605,6 +617,9 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginator
     {
+        $this->applyCriteria();
+        $this->applyScope();
+
         $results = $this->model->paginate($perPage, $columns, $pageName, $page);
 
         if (function_exists('app')) {
@@ -733,6 +748,9 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null): Paginator
     {
+        $this->applyCriteria();
+        $this->applyScope();
+
         $results = $this->model->simplePaginate($perPage, $columns, $pageName, $page);
 
         if (function_exists('app')) {
@@ -869,6 +887,17 @@ abstract class BaseRepository implements RepositoryInterface
     public function withCount($relations)
     {
         $this->model = $this->model->withCount($relations);
+        return $this;
+    }
+
+    /**
+     * Include trashed to query.
+     *
+     * @return $this
+     */
+    public function withTrashed()
+    {
+        $this->model = $this->model->withTrashed($relations);
         return $this;
     }
 

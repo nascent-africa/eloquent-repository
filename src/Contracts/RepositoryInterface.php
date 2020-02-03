@@ -232,9 +232,64 @@ interface RepositoryInterface
 
 
 
+
     /*
      * Not tested.
      */
+
+
+
+   /**
+    * Check if entity has relation
+    *
+    * @param string $relation
+    *
+    * @return $this
+    */
+   public function has($relation);
+
+   /**
+    * Set hidden fields
+    *
+    * @param array $fields
+    *
+    * @return $this
+    */
+   public function hidden(array $fields);
+
+   /**
+    * Set the "limit" value of the query.
+    *
+    * @param  int  $limit
+    * @return mixed
+    */
+   public function limit($limit);
+
+   /**
+    * Retrieve data array for populate field select
+    *
+    * @param string $column
+    * @param string|null $key
+    *
+    * @return \Illuminate\Support\Collection|array
+    */
+   public function lists($column, $key = null);
+
+   /**
+    * Order query
+    *
+    * @param string $column
+    * @param string $direction
+    * @return $this
+    */
+   public function orderBy($column, $direction = 'asc');
+
+   /**
+    * Only return trashed results.
+    *
+    * @return $this
+    */
+    public function onlyTrashed();
 
     /**
      * Pop Criteria
@@ -287,6 +342,13 @@ interface RepositoryInterface
      * @return $this
      */
     public function withCount($relations);
+
+    /**
+     * Include trashed to query.
+     *
+     * @return $this
+     */
+    public function withTrashed();
 
     /**
      * Load relation with closure
