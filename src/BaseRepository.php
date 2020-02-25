@@ -586,7 +586,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function onlyTrashed()
     {
-        $this->model = $this->model->onlyTrashed($relations);
+        $this->model = $this->model->onlyTrashed();
         return $this;
     }
 
@@ -814,7 +814,7 @@ abstract class BaseRepository implements RepositoryInterface
     {
         $this->applyScope();
 
-        $model = $this->model->findOrFail($id);
+        $model = $this->forceReturnModel($id);;
         $model->fill($attributes);
         $model->save();
 
@@ -897,7 +897,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function withTrashed()
     {
-        $this->model = $this->model->withTrashed($relations);
+        $this->model = $this->model->withTrashed();
         return $this;
     }
 
