@@ -6,33 +6,33 @@ namespace NascentAfrica\EloquentRepository\Console;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Class CriteriaMakeCommand
+ * Class InterfaceMakeCommand
  *
  * @package NascentAfrica\EloquentRepository\Console
  * @author Anitche Chisom
  */
-class CriteriaMakeCommand extends BaseCommand
+class InterfaceMakeCommand extends BaseCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'na:criteria';
+    protected $name = 'na:interface';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new criteria class';
+    protected $description = 'Create a new eloquent repository interface class';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Criteria';
+    protected $type = 'Repository Interface';
 
     /**
      * Get the stub file for the generator.
@@ -41,7 +41,7 @@ class CriteriaMakeCommand extends BaseCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/criteria.stub';
+        return __DIR__ . '/stubs/interface.stub';
     }
 
     /**
@@ -52,7 +52,7 @@ class CriteriaMakeCommand extends BaseCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.config('nascent-africa.repository.generator.namespaces.criteria', '\Criteria');
+        return $rootNamespace.config('nascent-africa.repository.generator.namespaces.interfaces', '\Contracts\Repositories');
     }
 
     /**

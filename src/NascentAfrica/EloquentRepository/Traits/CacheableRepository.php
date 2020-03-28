@@ -2,6 +2,9 @@
 
 namespace NascentAfrica\EloquentRepository\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use NascentAfrica\EloquentRepository\Contracts\CriteriaInterface;
 use NascentAfrica\EloquentRepository\Helpers\CacheKeys;
@@ -196,9 +199,9 @@ trait CacheableRepository
      *
      * @param array $columns
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function all($columns = ['*'])
+    public function all($columns = ['*']): Collection
     {
         if (!$this->allowedCache('all') || $this->isSkippedCache()) {
             return parent::all($columns);
@@ -216,25 +219,27 @@ trait CacheableRepository
     }
 
     /**
-     * Retrieve all data of repository, paginated
+     * Paginate the given query.
      *
-     * @param null  $limit
-     * @param array $columns
-     * @param string $method
+     * @param  int  $perPage
+     * @param  array  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      *
-     * @return mixed
+     * @throws \InvalidArgumentException|EloquentRepositoryException
      */
-    public function paginate($limit = null, $columns = ['*'], $method = 'paginate')
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginator
     {
         if (!$this->allowedCache('paginate') || $this->isSkippedCache()) {
-            return parent::paginate($limit, $columns, $method);
+            return parent::paginate($perPage, $columns, $pageName, $page);
         }
 
         $key = $this->getCacheKey('paginate', func_get_args());
 
         $minutes = $this->getCacheMinutes();
-        $value = $this->getCacheRepository()->remember($key, $minutes, function () use ($limit, $columns, $method) {
-            return parent::paginate($limit, $columns, $method);
+        $value = $this->getCacheRepository()->remember($key, $minutes, function () use ($perPage, $columns, $pageName, $page) {
+            return parent::paginate($perPage, $columns, $pageName, $page);
         });
 
         $this->resetModel();
@@ -248,9 +253,10 @@ trait CacheableRepository
      * @param       $id
      * @param array $columns
      *
-     * @return mixed
+     * @throws ModelNotFoundException
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function find($id, $columns = ['*'])
+    public function find($id, $columns = ['*']): Model
     {
         if (!$this->allowedCache('find') || $this->isSkippedCache()) {
             return parent::find($id, $columns);
@@ -274,9 +280,9 @@ trait CacheableRepository
      * @param       $value
      * @param array $columns
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findByField($field, $value = null, $columns = ['*'])
+    public function findByField($field, $value = null, $columns = ['*']): Collection
     {
         if (!$this->allowedCache('findByField') || $this->isSkippedCache()) {
             return parent::findByField($field, $value, $columns);
@@ -299,9 +305,9 @@ trait CacheableRepository
      * @param array $where
      * @param array $columns
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function findWhere(array $where, $columns = ['*'])
+    public function findWhere(array $where, $columns = ['*']): Collection
     {
         if (!$this->allowedCache('findWhere') || $this->isSkippedCache()) {
             return parent::findWhere($where, $columns);
@@ -323,9 +329,9 @@ trait CacheableRepository
      *
      * @param CriteriaInterface $criteria
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getByCriteria(CriteriaInterface $criteria)
+    public function getByCriteria(CriteriaInterface $criteria): Collection
     {
         if (!$this->allowedCache('getByCriteria') || $this->isSkippedCache()) {
             return parent::getByCriteria($criteria);

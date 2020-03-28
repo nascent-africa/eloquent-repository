@@ -63,7 +63,7 @@ class RepositoryServiceProvider extends ServiceProvider
     protected function offerPublishing()
     {
         $this->publishes([
-            __DIR__ . '/../config/repository.php' => config_path('nascent-africa/repository.php')
+            __DIR__ . '/../../../config/repository.php' => config_path('nascent-africa/repository.php')
         ]);
     }
 
@@ -93,7 +93,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     protected function configure()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/repository.php', 'nascent-africa.repository');
+        $this->mergeConfigFrom(__DIR__ . '/../../../config/repository.php', 'nascent-africa.repository');
     }
 
     /**
@@ -103,6 +103,6 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     protected function registerResources()
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'na_repository');
+        $this->loadTranslationsFrom(__DIR__ . '/../../../lang', 'na_repository');
     }
 }
