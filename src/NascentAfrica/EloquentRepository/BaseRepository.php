@@ -7,6 +7,7 @@ use NascentAfrica\EloquentRepository\Exception\EloquentRepositoryException;
 use Illuminate\Support\Collection as Criteria;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
