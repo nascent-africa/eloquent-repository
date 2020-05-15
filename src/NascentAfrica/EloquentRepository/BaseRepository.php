@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 use NascentAfrica\EloquentRepository\Contracts\CriteriaInterface;
 use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
 use NascentAfrica\EloquentRepository\Events\RepositoryEntityCreated;
@@ -737,6 +738,25 @@ abstract class BaseRepository implements RepositoryInterface
     public function resetScope()
     {
         $this->scopeQuery = null;
+
+        return $this;
+    }
+
+    /**
+     * Perform a search against the model's indexed data.
+     *
+     * @param string $search
+     * @param null $callback
+     * @return $this|Collection|\Laravel\Scout\Builder
+     * @throws EloquentRepositoryException
+     */
+    public function search($search = '', $callback = null)
+    {
+        if (! $this->model instanceof Searchable) {
+            throw new EloquentRepositoryException("Class {$this->model()} must use the Laravel\\Scout\\Searchable trait");
+        }
+
+        $this->model = $this->model->search($search, $callback)->get();
 
         return $this;
     }

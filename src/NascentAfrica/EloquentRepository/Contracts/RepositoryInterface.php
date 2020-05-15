@@ -322,6 +322,16 @@ interface RepositoryInterface
     public function resetScope();
 
     /**
+     * Perform a search against the model's indexed data.
+     *
+     * @param string $search
+     * @param null $callback
+     * @return $this|Collection|\Laravel\Scout\Builder
+     * @throws EloquentRepositoryException
+     */
+    public function search($search = '', $callback = null);
+
+    /**
      * @param Model $model
      * @return BaseRepository
      */
