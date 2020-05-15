@@ -1,14 +1,12 @@
 <?php
 
-use NascentAfrica\EloquentRepository\Exception;
-
-
-use \Exception;
+namespace NascentAfrica\EloquentRepository\Exceptions;
 
 /**
- * Class RepositoryServiceProvider
+ * Class EloquentRepositoryException
  *
- * @package NascentAfrica\EloquentRepository
+ * @package NascentAfrica\EloquentRepository\Exceptions
  * @author Anitche Chisom
  */
-class EloquentRepositoryException extends Exception {}
+class EloquentRepositoryException extends \Exception
+{}

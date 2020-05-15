@@ -2,19 +2,22 @@
 
 namespace NascentAfrica\EloquentRepository;
 
-
-use NascentAfrica\EloquentRepository\Exception\EloquentRepositoryException;
+use Closure;
+use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection as Criteria;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use NascentAfrica\EloquentRepository\Contracts\CriteriaInterface;
+use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
 use NascentAfrica\EloquentRepository\Events\RepositoryEntityCreated;
 use NascentAfrica\EloquentRepository\Events\RepositoryEntityDeleted;
 use NascentAfrica\EloquentRepository\Events\RepositoryEntityUpdated;
+use NascentAfrica\EloquentRepository\Exceptions\EloquentRepositoryException;
 use NascentAfrica\EloquentRepository\Traits\ComparesVersionsTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -30,7 +33,7 @@ abstract class BaseRepository implements RepositoryInterface
     use ComparesVersionsTrait;
 
     /**
-     * @var \Illuminate\Container\Container
+     * @var Container
      */
     protected $app;
 
@@ -47,12 +50,12 @@ abstract class BaseRepository implements RepositoryInterface
     protected $fieldSearchable = [];
 
     /**
-     * @var Model
+     * @var Model|Builder
      */
     protected $model;
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $scopeQuery = null;
 
@@ -62,9 +65,11 @@ abstract class BaseRepository implements RepositoryInterface
     protected $skipCriteria = false;
 
     /**
-     * EloquentRepository constructor
+     * BaseRepository constructor.
      *
      * @param Container $container
+     * @throws EloquentRepositoryException
+     * @throws BindingResolutionException
      */
     public function __construct(Container $container)
     {
@@ -77,9 +82,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Retrieve all data of repository
      *
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function all($columns = ['*']): Collection
     {
@@ -160,9 +166,11 @@ abstract class BaseRepository implements RepositoryInterface
     {}
 
     /**
-     * Count results of repository
+     * Count the resources in the database.
      *
      * @return int
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function count(): int
     {
@@ -177,8 +185,9 @@ abstract class BaseRepository implements RepositoryInterface
      *
      * @param array $where
      * @param string $columns
-     *
      * @return int
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function countWhere(array $where = [], $columns = '*'): int
     {
@@ -201,7 +210,9 @@ abstract class BaseRepository implements RepositoryInterface
      * Create a new instance of the given model.
      *
      * @param array $attributes
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function create(array $attributes): Model
     {
@@ -219,9 +230,11 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Delete a entity in repository by id
      *
-     * @param \Illuminate\Database\Eloquent\Model|$id
-     *
+     * @param Model|mixed $id
      * @return int
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     * @throws Exception
      */
     public function delete($id): int
     {
@@ -246,8 +259,10 @@ abstract class BaseRepository implements RepositoryInterface
      * Delete multiple entities by given criteria.
      *
      * @param array $where
-     *
      * @return int
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     * @throws Exception
      */
     public function deleteWhere(array $where): int
     {
@@ -269,10 +284,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Ensure a model is returned model.
      *
-     * @param int|Model
-     *
-     * @throws ModelNotFoundException
+     * @param $type
      * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     protected function forceReturnModel($type)
     {
@@ -284,13 +299,14 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
-     * Find data by id
+     * Find resource by it's ID
      *
-     * @param       $id
-     * @param array $columns
-     *
+     * @param $id
+     * @param string[] $columns
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      * @throws ModelNotFoundException
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function find($id, $columns = ['*']): Model
     {
@@ -305,11 +321,12 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by field and value
      *
-     * @param       $field
-     * @param       $value
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param $field
+     * @param null $value
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function findByField($field, $value = null, $columns = ['*']): Collection
     {
@@ -325,9 +342,10 @@ abstract class BaseRepository implements RepositoryInterface
      * Find data by multiple fields
      *
      * @param array $where
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function findWhere(array $where, $columns = ['*']): Collection
     {
@@ -346,11 +364,12 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by multiple values in one field
      *
-     * @param       $field
+     * @param $field
      * @param array $values
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function findWhereIn($field, array $values, $columns = ['*']): Collection
     {
@@ -365,11 +384,12 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by excluding multiple values in one field
      *
-     * @param       $field
+     * @param $field
      * @param array $values
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function findWhereNotIn($field, array $values, $columns = ['*']): Collection
     {
@@ -384,11 +404,12 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Find data by between values in one field
      *
-     * @param       $field
+     * @param $field
      * @param array $values
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function findWhereBetween($field, array $values, $columns = ['*']): Collection
     {
@@ -403,9 +424,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Retrieve first data of repository
      *
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param string[] $columns
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function first($columns = ['*']): Model
     {
@@ -423,8 +445,9 @@ abstract class BaseRepository implements RepositoryInterface
      * Retrieve first data of repository, or return new Entity
      *
      * @param array $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function firstOrNew(array $attributes = []): Model
     {
@@ -442,8 +465,9 @@ abstract class BaseRepository implements RepositoryInterface
      * Retrieve first data of repository, or create new Entity
      *
      * @param array $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function firstOrCreate(array $attributes = []): Model
     {
@@ -460,9 +484,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Alias of All method
      *
-     * @param array $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param string[] $columns
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function get($columns = ['*']): Collection
     {
@@ -473,8 +498,9 @@ abstract class BaseRepository implements RepositoryInterface
      * Find data by Criteria
      *
      * @param CriteriaInterface $criteria
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function getByCriteria(CriteriaInterface $criteria): Collection
     {
@@ -488,7 +514,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Get Collection of Criteria
      *
-     * @return \Illuminate\Support\Collection
+     * @return Criteria
      */
     public function getCriteria(): Criteria
     {
@@ -536,8 +562,10 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Set the "limit" value of the query.
      *
-     * @param  int  $limit
-     * @return mixed
+     * @param int $limit
+     * @return Builder|mixed
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function limit($limit)
     {
@@ -547,31 +575,15 @@ abstract class BaseRepository implements RepositoryInterface
 
         $this->resetModel();
 
-        return $this->parserResult($results);
+        return $results;
     }
 
     /**
-     * Retrieve data array for populate field select
-     *
-     * @param string $column
-     * @param string|null $key
-     *
-     * @return \Illuminate\Support\Collection|array
-     */
-    public function lists($column, $key = null)
-    {
-        $this->applyCriteria();
-
-        return $this->model->lists($column, $key);
-    }
-
-    /**
-     * Instantiate model from path.
-     *
      * @return Model
      * @throws EloquentRepositoryException
+     * @throws BindingResolutionException
      */
-    public function makeModel(): Model
+    protected function makeModel(): Model
     {
         $model = $this->app->make($this->model());
         if (!$model instanceof Model) {
@@ -583,12 +595,17 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Only return trashed results.
      *
-     * @return $this
+     * @return $this|BaseRepository
+     * @throws EloquentRepositoryException
      */
     public function onlyTrashed()
     {
-        $this->model = $this->model->onlyTrashed();
-        return $this;
+        if ($this->model instanceof SoftDeletes) {
+            $this->model = $this->model->onlyTrashed();
+            return $this;
+        }
+
+        throw new EloquentRepositoryException("Class must use Illuminate\\Database\\Eloquent\\SoftDeletes trait");
     }
 
     /**
@@ -608,15 +625,15 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Paginate the given query.
      *
-     * @param  int  $perPage
-     * @param  array  $columns
-     * @param  string  $pageName
-     * @param  int|null  $page
-     * @return \Illuminate\Pagination\LengthAwarePaginator
-     *
-     * @throws \InvalidArgumentException|EloquentRepositoryException
+     * @param int $perPage
+     * @param string[] $columns
+     * @param string $pageName
+     * @param null $page
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|LengthAwarePaginator
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
-    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginator
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $this->applyCriteria();
         $this->applyScope();
@@ -628,17 +645,16 @@ abstract class BaseRepository implements RepositoryInterface
         }
 
         $this->resetModel();
+
         return $results;
     }
 
     /**
-     * Retrieve data array for populate field select
+     * Get an array with the values of a given column.
      *
-     * Compatible with Laravel 5.3
      * @param string $column
-     * @param string|null $key
-     *
-     * @return \Illuminate\Support\Collection|array
+     * @param null|string $key
+     * @return array|Criteria
      */
     public function pluck($column, $key = null)
     {
@@ -705,7 +721,8 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
-     * @throws RepositoryException
+     * @throws EloquentRepositoryException
+     * @throws BindingResolutionException
      */
     public function resetModel()
     {
@@ -725,13 +742,23 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * @param Model $model
+     * @return BaseRepository
+     */
+    public function setModel(Model $model): BaseRepository
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    /**
      * Query Scope
      *
-     * @param \Closure $scope
+     * @param Closure $scope
      *
      * @return $this
      */
-    public function scopeQuery(\Closure $scope)
+    public function scopeQuery(Closure $scope)
     {
         $this->scopeQuery = $scope;
 
@@ -741,11 +768,13 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param  int  $perPage
-     * @param  array  $columns
-     * @param  string  $pageName
-     * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @param null $perPage
+     * @param string[] $columns
+     * @param string $pageName
+     * @param null $page
+     * @return Paginator
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null): Paginator
     {
@@ -784,6 +813,8 @@ abstract class BaseRepository implements RepositoryInterface
      * @param $attributes
      * @param bool $detaching
      * @return mixed
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function sync($id, $relation, $attributes, $detaching = true)
     {
@@ -797,6 +828,8 @@ abstract class BaseRepository implements RepositoryInterface
      * @param $relation
      * @param $attributes
      * @return mixed
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function syncWithoutDetaching($id, $relation, $attributes)
     {
@@ -806,16 +839,17 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * Update a entity in repository by id
      *
-     * @param       $id
+     * @param $id
      * @param array $attributes
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function update($id, array $attributes): Model
     {
         $this->applyScope();
 
-        $model = $this->forceReturnModel($id);;
+        $model = $this->forceReturnModel($id);
         $model->fill($attributes);
         $model->save();
 
@@ -833,8 +867,9 @@ abstract class BaseRepository implements RepositoryInterface
      *
      * @param array $attributes
      * @param array $values
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
      */
     public function updateOrCreate(array $attributes, array $values = []): Model
     {
@@ -906,7 +941,7 @@ abstract class BaseRepository implements RepositoryInterface
      * Load relation with closure
      *
      * @param string $relation
-     * @param closure $closure
+     * @param Closure $closure
      *
      * @return $this
      */

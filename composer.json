@@ -23,11 +23,12 @@
     "require-dev": {
         "fzaninotto/faker": "^1.4",
         "phpunit/phpunit": "^8.5",
-        "laravel/laravel": "^6.12"
+        "laravel/framework": "^7.0",
+        "orchestra/testbench": "^5.2"
     },
     "autoload": {
         "psr-4": {
-            "NascentAfrica\\EloquentRepository\\": "src/NascentAfrica/EloquentRepository"
+            "NascentAfrica\\EloquentRepository\\": "src/NascentAfrica/EloquentRepository/"
         }
     },
     "autoload-dev": {
@@ -36,7 +37,8 @@
             "Test\\": "tests/"
         },
         "classmap": [
-            "database/factories"
+            "tests/database/factories",
+            "tests/database/migrations"
         ]
     },
     "minimum-stability": "dev",

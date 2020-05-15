@@ -1,13 +1,14 @@
 <?php
 
-namespace App;
+namespace Test;
 
 use NascentAfrica\EloquentRepository\Contracts\CriteriaInterface;
 use NascentAfrica\EloquentRepository\Contracts\RepositoryInterface;
 
 /**
- * Description of Criteria
+ * Class Criteria
  *
+ * @package Test
  * @author Anitche Chisom
  */
 class Criteria implements CriteriaInterface

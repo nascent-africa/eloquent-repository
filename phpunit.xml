@@ -1,7 +1,17 @@
-<phpunit bootstrap="vendor/autoload.php">
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
   <testsuites>
     <testsuite name="repository">
-      <file>./tests/RepositoryTestCase.php</file>
+      <file>./tests/BaseRepositoryTest.php</file>
     </testsuite>
   </testsuites>
+
+  <php>
+    <server name="DB_CONNECTION" value="sqlite"/>
+    <server name="DB_DATABASE" value=":memory:"/>
+  </php>
 </phpunit>
