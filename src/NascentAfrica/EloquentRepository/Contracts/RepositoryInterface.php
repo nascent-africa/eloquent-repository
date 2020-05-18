@@ -216,6 +216,13 @@ interface RepositoryInterface
     public function getFieldsSearchable(): array;
 
     /**
+     * Get the model instance being queried.
+     *
+     * @return Builder|Model
+     */
+    public function getModel();
+
+    /**
      * Check if entity has relation
      *
      * @param string $relation

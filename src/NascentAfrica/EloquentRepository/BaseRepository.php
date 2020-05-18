@@ -533,6 +533,20 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * Get the model instance being queried.
+     *
+     * @return Builder|Model
+     */
+    public function getModel()
+    {
+        if ($this->model instanceof Builder) {
+            return $this->model->getModel();
+        }
+
+        return $this->model;
+    }
+
+    /**
      * Check if entity has relation
      *
      * @param string $relation
