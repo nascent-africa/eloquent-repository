@@ -205,6 +205,27 @@ class BaseRepositoryTest extends TestCase
      * @throws BindingResolutionException
      * @throws EloquentRepositoryException
      */
+    public function testForceDelete()
+    {
+        factory(User::class)->create();
+
+        $this->repository->setModel(new SoftDeleteUser);
+
+        Event::fake();
+
+        $result = $this->repository->forceDelete(1);
+
+        // Assert an event was dispatched twice...
+        Event::assertDispatched(RepositoryEntityDeleted::class);
+
+        $this->assertEquals(1, $result);
+        $this->assertDatabaseMissing('users', ['id' => 1]);
+    }
+
+    /**
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     */
     public function testDeleteWhere()
     {
         $user = factory(User::class)->create();

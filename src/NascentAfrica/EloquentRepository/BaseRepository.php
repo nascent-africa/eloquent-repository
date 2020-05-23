@@ -249,7 +249,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         $deleted = $model->delete();
 
-        if (function_exists('event')) {
+        if (! method_exists($this->model, 'forceDelete') && function_exists('event')) {
             event(new RepositoryEntityDeleted($this, $originalModel));
         }
 
@@ -273,7 +273,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         $deleted = $this->model->delete();
 
-        if (function_exists('event')) {
+        if (! method_exists($this->model, 'forceDelete') && function_exists('event')) {
             event(new RepositoryEntityDeleted($this, $this->model->getModel()));
         }
 
@@ -480,6 +480,37 @@ abstract class BaseRepository implements RepositoryInterface
         $this->resetModel();
 
         return $model;
+    }
+
+    /**
+     * Force delete an entity by id.
+     *
+     * @param string|int $id
+     * @return int
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     */
+    public function forceDelete($id): int
+    {
+        if (! method_exists($this->model, 'forceDelete')) {
+            throw new EloquentRepositoryException("Class must use Illuminate\\Database\\Eloquent\\SoftDeletes trait");
+        }
+
+        $this->applyScope();
+
+        $model = $this->forceReturnModel($id);
+
+        $originalModel = clone $model;
+
+        $this->resetModel();
+
+        $deleted = $model->forceDelete();
+
+        if (function_exists('event')) {
+            event(new RepositoryEntityDeleted($this, $originalModel));
+        }
+
+        return $deleted;
     }
 
     /**

@@ -182,6 +182,16 @@ interface RepositoryInterface
     public function firstOrCreate(array $attributes = []): Model;
 
     /**
+     * Force delete an entity by id.
+     *
+     * @param string|int $id
+     * @return int
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     */
+    public function forceDelete($id): int;
+
+    /**
      * Alias of All method
      *
      * @param string[] $columns
