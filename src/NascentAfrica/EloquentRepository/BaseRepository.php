@@ -645,9 +645,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function onlyTrashed()
     {
-        if (method_exists($this->model, 'onlyTrashed')) {
-            $this->model = $this->model->onlyTrashed();
-        }
+        $this->model = $this->model->onlyTrashed();
         return $this;
     }
 
@@ -995,9 +993,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function withTrashed()
     {
-        if (method_exists($this->model, 'withTrashed')) {
-            $this->model = $this->model->withTrashed();
-        }
+        $this->model = $this->model->withTrashed();
         return $this;
     }
 
