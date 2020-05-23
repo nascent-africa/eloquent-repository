@@ -461,7 +461,8 @@ interface RepositoryInterface
     /**
      * Include trashed to query.
      *
-     * @return $this
+     * @return $this|BaseRepository
+     * @throws EloquentRepositoryException
      */
     public function withTrashed();
 
