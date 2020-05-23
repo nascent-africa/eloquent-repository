@@ -264,7 +264,6 @@ interface RepositoryInterface
      * Only return trashed results.
      *
      * @return $this|BaseRepository
-     * @throws EloquentRepositoryException
      */
     public function onlyTrashed();
 
@@ -462,7 +461,6 @@ interface RepositoryInterface
      * Include trashed to query.
      *
      * @return $this|BaseRepository
-     * @throws EloquentRepositoryException
      */
     public function withTrashed();
 

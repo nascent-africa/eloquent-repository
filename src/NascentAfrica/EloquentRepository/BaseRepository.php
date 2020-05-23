@@ -642,16 +642,13 @@ abstract class BaseRepository implements RepositoryInterface
      * Only return trashed results.
      *
      * @return $this|BaseRepository
-     * @throws EloquentRepositoryException
      */
     public function onlyTrashed()
     {
         if (method_exists($this->model, 'onlyTrashed')) {
             $this->model = $this->model->onlyTrashed();
-            return $this;
         }
-
-        throw new EloquentRepositoryException("Class must use Illuminate\\Database\\Eloquent\\SoftDeletes trait");
+        return $this;
     }
 
     /**
@@ -995,16 +992,13 @@ abstract class BaseRepository implements RepositoryInterface
      * Include trashed to query.
      *
      * @return $this|BaseRepository
-     * @throws EloquentRepositoryException
      */
     public function withTrashed()
     {
         if (method_exists($this->model, 'withTrashed')) {
             $this->model = $this->model->withTrashed();
-            return $this;
         }
-
-        throw new EloquentRepositoryException("Class must use Illuminate\\Database\\Eloquent\\SoftDeletes trait");
+        return $this;
     }
 
     /**
