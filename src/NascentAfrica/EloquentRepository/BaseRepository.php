@@ -771,6 +771,26 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * Restore soft deleted model.
+     *
+     * @param $id
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     */
+    public function restore($id): Model
+    {
+        $this->applyScope();
+
+        $model = $this->withTrashed()->forceReturnModel($id);
+        $model->restore();
+
+        $this->resetModel();
+
+        return $model;
+    }
+
+    /**
      * Reset Query Scope
      *
      * @return $this

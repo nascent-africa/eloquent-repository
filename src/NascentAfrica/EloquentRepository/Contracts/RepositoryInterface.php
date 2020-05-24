@@ -325,6 +325,16 @@ interface RepositoryInterface
     public function resetCriteria();
 
     /**
+     * Restore soft deleted model.
+     *
+     * @param $id
+     * @return Model
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     */
+    public function restore($id): Model;
+
+    /**
      * @throws EloquentRepositoryException
      * @throws BindingResolutionException
      */
