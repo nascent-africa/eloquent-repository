@@ -553,6 +553,23 @@ class BaseRepositoryTest extends TestCase
         $this->assertDatabaseMissing('users', ['id' => 1]);
     }
 
+    /**
+     * @throws BindingResolutionException
+     * @throws EloquentRepositoryException
+     */
+    public function testRestore()
+    {
+        factory(User::class)->create();
+
+        $this->repository
+            ->setModel(new SoftDeleteUser)->deleteWhere(['id' => 1]);
+
+        $result = $this->repository
+            ->setModel(new SoftDeleteUser)->restore(1);
+
+        $this->assertEquals(null, $result->deleted_at);
+    }
+
 //    public function testSkipCriteria()
 //    {
 //

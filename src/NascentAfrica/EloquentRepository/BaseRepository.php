@@ -249,7 +249,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         $deleted = $model->delete();
 
-        if (! method_exists($this->model, 'forceDelete') && function_exists('event')) {
+        if (! method_exists($deleted, 'forceDelete') && function_exists('event')) {
             event(new RepositoryEntityDeleted($this, $originalModel));
         }
 
@@ -273,7 +273,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         $deleted = $this->model->delete();
 
-        if (! method_exists($this->model, 'forceDelete') && function_exists('event')) {
+        if (! method_exists($deleted, 'forceDelete') && function_exists('event')) {
             event(new RepositoryEntityDeleted($this, $this->model->getModel()));
         }
 
